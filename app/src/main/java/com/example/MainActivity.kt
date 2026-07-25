@@ -31,8 +31,10 @@ class MainActivity : ComponentActivity() {
                 false -> false
                 null -> isSystemInDarkTheme()
             }
+            
+            val appTheme by viewModel.appTheme.collectAsState()
 
-            MyApplicationTheme(darkTheme = useDarkTheme) {
+            MyApplicationTheme(darkTheme = useDarkTheme, appTheme = appTheme) {
                 MainAppScreen(viewModel = viewModel)
             }
         }

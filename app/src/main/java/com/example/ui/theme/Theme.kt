@@ -5,6 +5,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.graphics.Color
+
+val LocalAppTheme = staticCompositionLocalOf { "default" }
 
 private val DarkColorScheme = darkColorScheme(
     primary = OrangePrimary,
@@ -32,16 +37,36 @@ private val LightColorScheme = lightColorScheme(
     onSurface = LightOnSurface
 )
 
+private val ElectroColorScheme = darkColorScheme(
+    primary = ElectroPrimary,
+    secondary = ElectroSecondary,
+    tertiary = EmeraldGreen,
+    background = ElectroBackground,
+    surface = ElectroSurface,
+    onPrimary = ElectroBackground,
+    onSecondary = ElectroBackground,
+    onTertiary = ElectroBackground,
+    onBackground = DarkOnBackground,
+    onSurface = DarkOnSurface
+)
+
 @Composable
 fun MyApplicationTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
+    appTheme: String = "default",
     content: @Composable () -> Unit
 ) {
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+    val colorScheme = when {
+        appTheme == "electro" -> ElectroColorScheme
+        darkTheme -> DarkColorScheme
+        else -> LightColorScheme
+    }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    CompositionLocalProvider(LocalAppTheme provides appTheme) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 }

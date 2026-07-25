@@ -44,11 +44,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.R
 import com.example.data.model.GemTransaction
-import com.example.ui.theme.EmeraldGreen
-import com.example.ui.theme.GoldGold
-import com.example.ui.theme.GoldYellow
-import com.example.ui.theme.OrangeFlame
-import com.example.ui.theme.OrangePrimary
 import com.example.ui.viewmodel.AppScreen
 import com.example.ui.viewmodel.GemsViewModel
 import kotlinx.coroutines.delay
@@ -132,7 +127,7 @@ fun MainAppScreen(viewModel: GemsViewModel) {
                     bottomBar = {
                         if (currentScreen != AppScreen.Splash) {
                             NavigationBar(
-                                containerColor = Color(0xFF1E1E1E),
+                                containerColor = MaterialTheme.colorScheme.background,
                                 modifier = Modifier
                                     .border(1.dp, Color.White.copy(alpha = 0.05f))
                                     .windowInsetsPadding(WindowInsets.navigationBars),
@@ -144,8 +139,8 @@ fun MainAppScreen(viewModel: GemsViewModel) {
                                     icon = { Icon(if (currentScreen == AppScreen.Dashboard) Icons.Default.Home else Icons.Outlined.Home, null) },
                                     label = { Text("Home", fontWeight = FontWeight.Bold, fontSize = 10.sp) },
                                     colors = NavigationBarItemDefaults.colors(
-                                        selectedIconColor = OrangePrimary,
-                                        selectedTextColor = OrangePrimary,
+                                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                                        selectedTextColor = MaterialTheme.colorScheme.primary,
                                         indicatorColor = Color(0xFF2D1F16),
                                         unselectedIconColor = Color(0xFF94A3B8),
                                         unselectedTextColor = Color(0xFF94A3B8)
@@ -157,8 +152,8 @@ fun MainAppScreen(viewModel: GemsViewModel) {
                                     icon = { Icon(if (currentScreen == AppScreen.Statistics) Icons.Default.BarChart else Icons.Outlined.BarChart, null) },
                                     label = { Text("Stats", fontWeight = FontWeight.Bold, fontSize = 10.sp) },
                                     colors = NavigationBarItemDefaults.colors(
-                                        selectedIconColor = OrangePrimary,
-                                        selectedTextColor = OrangePrimary,
+                                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                                        selectedTextColor = MaterialTheme.colorScheme.primary,
                                         indicatorColor = Color(0xFF2D1F16),
                                         unselectedIconColor = Color(0xFF94A3B8),
                                         unselectedTextColor = Color(0xFF94A3B8)
@@ -170,8 +165,8 @@ fun MainAppScreen(viewModel: GemsViewModel) {
                                     icon = { Icon(Icons.Default.AddCircle, null, modifier = Modifier.size(28.dp)) },
                                     label = { Text("Update", fontWeight = FontWeight.Bold, fontSize = 10.sp) },
                                     colors = NavigationBarItemDefaults.colors(
-                                        selectedIconColor = OrangePrimary,
-                                        selectedTextColor = OrangePrimary,
+                                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                                        selectedTextColor = MaterialTheme.colorScheme.primary,
                                         indicatorColor = Color(0xFF2D1F16),
                                         unselectedIconColor = Color(0xFF94A3B8),
                                         unselectedTextColor = Color(0xFF94A3B8)
@@ -183,8 +178,8 @@ fun MainAppScreen(viewModel: GemsViewModel) {
                                     icon = { Icon(if (currentScreen == AppScreen.History) Icons.Default.History else Icons.Outlined.History, null) },
                                     label = { Text("Riwayat", fontWeight = FontWeight.Bold, fontSize = 10.sp) },
                                     colors = NavigationBarItemDefaults.colors(
-                                        selectedIconColor = OrangePrimary,
-                                        selectedTextColor = OrangePrimary,
+                                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                                        selectedTextColor = MaterialTheme.colorScheme.primary,
                                         indicatorColor = Color(0xFF2D1F16),
                                         unselectedIconColor = Color(0xFF94A3B8),
                                         unselectedTextColor = Color(0xFF94A3B8)
@@ -196,8 +191,8 @@ fun MainAppScreen(viewModel: GemsViewModel) {
                                     icon = { Icon(if (currentScreen == AppScreen.Settings) Icons.Default.Settings else Icons.Outlined.Settings, null) },
                                     label = { Text("Settings", fontWeight = FontWeight.Bold, fontSize = 10.sp) },
                                     colors = NavigationBarItemDefaults.colors(
-                                        selectedIconColor = OrangePrimary,
-                                        selectedTextColor = OrangePrimary,
+                                        selectedIconColor = MaterialTheme.colorScheme.primary,
+                                        selectedTextColor = MaterialTheme.colorScheme.primary,
                                         indicatorColor = Color(0xFF2D1F16),
                                         unselectedIconColor = Color(0xFF94A3B8),
                                         unselectedTextColor = Color(0xFF94A3B8)
@@ -289,16 +284,14 @@ fun SplashScreen() {
         animStart = true
     }
 
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(Color(0xFF1F1B16), Color(0xFF0E0C0A))
-                )
-            ),
+            .background(MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.Center
     ) {
+
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
@@ -309,14 +302,14 @@ fun SplashScreen() {
                     .scale(scale)
                     .alpha(alpha)
                     .clip(CircleShape)
-                    .background(Color(0xFF27211B))
+                    .background(MaterialTheme.colorScheme.surface)
                     .padding(12.dp),
                 contentAlignment = Alignment.Center
             ) {
                 // Outer gold loading rings
                 CircularProgressIndicator(
                     modifier = Modifier.fillMaxSize(),
-                    color = GoldYellow,
+                    color = MaterialTheme.colorScheme.secondary,
                     strokeWidth = 3.dp
                 )
 
@@ -336,7 +329,7 @@ fun SplashScreen() {
                 text = "COC F2P GEMS TRACKER",
                 fontWeight = FontWeight.Bold,
                 fontSize = 24.sp,
-                color = GoldGold,
+                color = MaterialTheme.colorScheme.secondary,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .alpha(alpha)
@@ -359,7 +352,7 @@ fun SplashScreen() {
                 modifier = Modifier
                     .width(160.dp)
                     .clip(RoundedCornerShape(8.dp)),
-                color = OrangePrimary,
+                color = MaterialTheme.colorScheme.primary,
                 trackColor = Color(0xFF332D27)
             )
         }
@@ -379,6 +372,7 @@ fun UsernameDialog(onSave: (String) -> Unit) {
         properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
     ) {
         Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
             shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier
@@ -396,7 +390,7 @@ fun UsernameDialog(onSave: (String) -> Unit) {
                     modifier = Modifier
                         .size(60.dp)
                         .background(
-                            brush = Brush.radialGradient(listOf(GoldGold, OrangePrimary)),
+                            brush = Brush.radialGradient(listOf(MaterialTheme.colorScheme.secondary, MaterialTheme.colorScheme.primary)),
                             shape = CircleShape
                         ),
                     contentAlignment = Alignment.Center
@@ -415,7 +409,7 @@ fun UsernameDialog(onSave: (String) -> Unit) {
                     text = "Selamat Datang, Chief!",
                     fontWeight = FontWeight.Bold,
                     fontSize = 20.sp,
-                    color = GoldYellow,
+                    color = MaterialTheme.colorScheme.secondary,
                     textAlign = TextAlign.Center
                 )
 
@@ -444,7 +438,7 @@ fun UsernameDialog(onSave: (String) -> Unit) {
                         .fillMaxWidth()
                         .testTag("username_input_field"),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = OrangePrimary,
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
                         unfocusedBorderColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
                     ),
                     shape = RoundedCornerShape(12.dp)
@@ -476,7 +470,7 @@ fun UsernameDialog(onSave: (String) -> Unit) {
                         .testTag("save_username_button")
                         .height(50.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = OrangeFlame,
+                        containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = Color.White
                     ),
                     shape = RoundedCornerShape(12.dp)
@@ -535,8 +529,8 @@ fun DashboardScreen(viewModel: GemsViewModel) {
                     
                     Surface(
                         shape = RoundedCornerShape(12.dp),
-                        color = if (isSelected) OrangePrimary else Color(0xFF2D1F16),
-                        border = BorderStroke(1.dp, if (isSelected) OrangePrimary else Color.White.copy(alpha = 0.1f)),
+                        color = if (isSelected) MaterialTheme.colorScheme.primary else Color(0xFF2D1F16),
+                        border = BorderStroke(1.dp, if (isSelected) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.1f)),
                         modifier = Modifier.clickable { viewModel.setActiveProfile(profileId) }
                     ) {
                         Text(
@@ -565,7 +559,7 @@ fun DashboardScreen(viewModel: GemsViewModel) {
                         text = "WELCOME BACK",
                         fontSize = 11.sp,
                         fontWeight = FontWeight.Bold,
-                        color = OrangePrimary,
+                        color = MaterialTheme.colorScheme.primary,
                         letterSpacing = 2.sp,
                         modifier = Modifier.alpha(0.8f)
                     )
@@ -604,8 +598,9 @@ fun DashboardScreen(viewModel: GemsViewModel) {
         item {
             val txs by viewModel.transactions.collectAsState()
             Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
                 shape = RoundedCornerShape(24.dp), // rounded-3xl
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
                 modifier = Modifier
                     .fillMaxWidth()
                     .border(1.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(24.dp)),
@@ -620,7 +615,7 @@ fun DashboardScreen(viewModel: GemsViewModel) {
                             .background(
                                 brush = Brush.radialGradient(
                                     colors = listOf(
-                                        Color(0xFFF97316).copy(alpha = 0.12f),
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.12f),
                                         Color.Transparent
                                     )
                                 ),
@@ -690,7 +685,7 @@ fun DashboardScreen(viewModel: GemsViewModel) {
             }
         }
 
-        // 3. Grid Stats (Double column containers of Color(0xFF25292E))
+        // 3. Grid Stats (Double column containers of MaterialTheme.colorScheme.surface)
         item {
             val txs by viewModel.transactions.collectAsState()
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
@@ -699,7 +694,7 @@ fun DashboardScreen(viewModel: GemsViewModel) {
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .background(Color(0xFF25292E), RoundedCornerShape(16.dp))
+                            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
                             .border(1.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(16.dp))
                             .padding(14.dp)
                     ) {
@@ -725,7 +720,7 @@ fun DashboardScreen(viewModel: GemsViewModel) {
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .background(Color(0xFF25292E), RoundedCornerShape(16.dp))
+                            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
                             .border(1.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(16.dp))
                             .padding(14.dp)
                     ) {
@@ -753,7 +748,7 @@ fun DashboardScreen(viewModel: GemsViewModel) {
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .background(Color(0xFF25292E), RoundedCornerShape(16.dp))
+                            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
                             .border(1.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(16.dp))
                             .padding(14.dp)
                     ) {
@@ -779,7 +774,7 @@ fun DashboardScreen(viewModel: GemsViewModel) {
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .background(Color(0xFF25292E), RoundedCornerShape(16.dp))
+                            .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
                             .border(1.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(16.dp))
                             .padding(14.dp)
                     ) {
@@ -808,8 +803,9 @@ fun DashboardScreen(viewModel: GemsViewModel) {
         item {
             val remaining = (targetGems - totalOverall).coerceAtLeast(0)
             Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
                 shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
                 modifier = Modifier
                     .fillMaxWidth()
                     .border(1.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(24.dp))
@@ -851,7 +847,7 @@ fun DashboardScreen(viewModel: GemsViewModel) {
                                     brush = Brush.horizontalGradient(
                                         colors = listOf(
                                             Color(0xFFEA580C), // orange-600
-                                            Color(0xFFF97316), // orange-500
+                                            MaterialTheme.colorScheme.primary, // orange-500
                                             Color(0xFFFFD700)  // yellow-gold
                                         )
                                     ),
@@ -899,11 +895,11 @@ fun DashboardScreen(viewModel: GemsViewModel) {
                     .fillMaxWidth()
                     .background(
                         brush = Brush.verticalGradient(
-                            colors = listOf(Color(0xFF2D1F16), Color(0xFF1E1E1E))
+                            colors = listOf(Color(0xFF2D1F16), MaterialTheme.colorScheme.background)
                         ),
                         shape = RoundedCornerShape(16.dp)
                     )
-                    .border(1.dp, Color(0xFFF97316).copy(alpha = 0.20f), RoundedCornerShape(16.dp))
+                    .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.20f), RoundedCornerShape(16.dp))
                     .padding(14.dp)
             ) {
                 Row(
@@ -912,7 +908,7 @@ fun DashboardScreen(viewModel: GemsViewModel) {
                 ) {
                     Box(
                         modifier = Modifier
-                            .background(Color(0xFFF97316).copy(alpha = 0.15f), RoundedCornerShape(10.dp))
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f), RoundedCornerShape(10.dp))
                             .padding(8.dp)
                     ) {
                         Icon(
@@ -952,7 +948,7 @@ fun DashboardScreen(viewModel: GemsViewModel) {
                                 onClick = { viewModel.fetchOnlineAiInsight(targetGems, totalOverall, averageGemsPerDay) },
                                 enabled = !isFetchingAi,
                                 modifier = Modifier.height(32.dp),
-                                colors = ButtonDefaults.buttonColors(containerColor = OrangePrimary, contentColor = Color.White),
+                                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = Color.White),
                                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
                                 shape = RoundedCornerShape(8.dp)
                             ) {
@@ -985,8 +981,9 @@ fun DashboardScreen(viewModel: GemsViewModel) {
         // 6. Subgrid navigation menu for quick feature jumps
         item {
             Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFF1E1E1E)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
                 modifier = Modifier
                     .fillMaxWidth()
                     .border(1.dp, Color.White.copy(alpha = 0.05f), RoundedCornerShape(16.dp))
@@ -1007,14 +1004,14 @@ fun DashboardScreen(viewModel: GemsViewModel) {
                         MenuButton(
                             title = "Update Gems",
                             icon = Icons.Default.AddCircle,
-                            color = OrangePrimary,
+                            color = MaterialTheme.colorScheme.primary,
                             onClick = { viewModel.setScreen(AppScreen.UpdateGems) },
                             modifier = Modifier.weight(1f)
                         )
                         MenuButton(
                             title = "Statistik",
                             icon = Icons.Default.BarChart,
-                            color = GoldYellow,
+                            color = MaterialTheme.colorScheme.secondary,
                             onClick = { viewModel.setScreen(AppScreen.Statistics) },
                             modifier = Modifier.weight(1f)
                         )
@@ -1039,7 +1036,7 @@ fun DashboardScreen(viewModel: GemsViewModel) {
                         MenuButton(
                             title = "Analisa AI",
                             icon = Icons.Default.SmartToy,
-                            color = EmeraldGreen,
+                            color = MaterialTheme.colorScheme.tertiary,
                             onClick = { viewModel.setScreen(AppScreen.OfflineAI) },
                             modifier = Modifier.weight(1f)
                         )
@@ -1082,6 +1079,7 @@ fun StatBox(
     modifier: Modifier = Modifier
 ) {
     Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         modifier = modifier
@@ -1119,6 +1117,7 @@ fun MenuButton(
     modifier: Modifier = Modifier
 ) {
     Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         modifier = modifier
@@ -1185,10 +1184,11 @@ fun UpdateGemsScreen(viewModel: GemsViewModel) {
             text = "Input Gems",
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
-            color = EmeraldGreen
+            color = MaterialTheme.colorScheme.tertiary
         )
 
         Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -1240,7 +1240,7 @@ fun UpdateGemsScreen(viewModel: GemsViewModel) {
                             onClick = { selectedSource = src },
                             label = { Text(src) },
                             colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = OrangePrimary,
+                                selectedContainerColor = MaterialTheme.colorScheme.primary,
                                 selectedLabelColor = Color.White
                             ),
                             shape = RoundedCornerShape(12.dp)
@@ -1280,7 +1280,7 @@ fun UpdateGemsScreen(viewModel: GemsViewModel) {
                         .testTag("save_gems_button")
                         .height(50.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = OrangeFlame,
+                        containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = Color.White
                     ),
                     shape = RoundedCornerShape(12.dp)
@@ -1345,6 +1345,7 @@ fun StatisticsScreen(viewModel: GemsViewModel) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -1372,7 +1373,7 @@ fun StatisticsScreen(viewModel: GemsViewModel) {
                             contentPadding = PaddingValues(0.dp),
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isSelected) OrangePrimary else MaterialTheme.colorScheme.background,
+                                containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background,
                                 contentColor = if (isSelected) Color.White else MaterialTheme.colorScheme.onBackground
                             )
                         ) {
@@ -1385,6 +1386,7 @@ fun StatisticsScreen(viewModel: GemsViewModel) {
 
         // Summary details panel
         Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -1398,7 +1400,7 @@ fun StatisticsScreen(viewModel: GemsViewModel) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
                     Text("Total Gems", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text("$totalGems", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = OrangePrimary)
+                    Text("$totalGems", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = MaterialTheme.colorScheme.primary)
                 }
                 Box(modifier = Modifier
                     .width(1.dp)
@@ -1407,7 +1409,7 @@ fun StatisticsScreen(viewModel: GemsViewModel) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
                     Text("Rata-rata", fontSize = 11.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
                     Spacer(modifier = Modifier.height(4.dp))
-                    Text(String.format("%.1f", averageGems), fontWeight = FontWeight.Bold, fontSize = 18.sp, color = GoldYellow)
+                    Text(String.format("%.1f", averageGems), fontWeight = FontWeight.Bold, fontSize = 18.sp, color = MaterialTheme.colorScheme.secondary)
                 }
                 Box(modifier = Modifier
                     .width(1.dp)
@@ -1421,7 +1423,7 @@ fun StatisticsScreen(viewModel: GemsViewModel) {
                             val valDiff = periodGemsMap.last().second - periodGemsMap[periodGemsMap.size - 2].second
                             if (valDiff >= 0) "+$valDiff" else "$valDiff"
                         } else "N/A",
-                        fontWeight = FontWeight.Bold, fontSize = 18.sp, color = EmeraldGreen
+                        fontWeight = FontWeight.Bold, fontSize = 18.sp, color = MaterialTheme.colorScheme.tertiary
                     )
                 }
             }
@@ -1429,6 +1431,7 @@ fun StatisticsScreen(viewModel: GemsViewModel) {
 
         // Beautiful Graphic Canvas Card
         Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -1459,6 +1462,8 @@ fun StatisticsScreen(viewModel: GemsViewModel) {
                     // Modern styled Custom Column Canvas Graph
                     val maxValue = (periodGemsMap.maxOf { it.second }.toFloat() * 1.25f).coerceAtLeast(10f)
 
+                    val canvasPrimaryColor = MaterialTheme.colorScheme.primary
+                    val canvasSecondaryColor = MaterialTheme.colorScheme.secondary
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -1491,9 +1496,11 @@ fun StatisticsScreen(viewModel: GemsViewModel) {
                                 val yPos = chartBottom - barHeight
 
                                 // Draw bar gradient
+                                
+                                
                                 drawRoundRect(
                                     brush = Brush.verticalGradient(
-                                        colors = listOf(OrangePrimary, GoldYellow)
+                                        colors = listOf(canvasPrimaryColor, canvasSecondaryColor)
                                     ),
                                     topLeft = androidx.compose.ui.geometry.Offset(xPos, yPos),
                                     size = androidx.compose.ui.geometry.Size(barWidth, barHeight),
@@ -1524,7 +1531,7 @@ fun StatisticsScreen(viewModel: GemsViewModel) {
                                         text = "+${pair.second}",
                                         fontSize = 11.sp,
                                         fontWeight = FontWeight.Bold,
-                                        color = GoldYellow,
+                                        color = MaterialTheme.colorScheme.secondary,
                                         modifier = Modifier.padding(bottom = 220.dp).offset(y = 175.dp)
                                     )
                                     Text(
@@ -1551,7 +1558,7 @@ fun StatisticsScreen(viewModel: GemsViewModel) {
                     Icon(
                         imageVector = Icons.Default.TrendingUp,
                         contentDescription = null,
-                        tint = EmeraldGreen,
+                        tint = MaterialTheme.colorScheme.tertiary,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -1588,11 +1595,12 @@ fun HistoryScreen(viewModel: GemsViewModel) {
             text = "Riwayat Gems",
             fontSize = 22.sp,
             fontWeight = FontWeight.Bold,
-            color = EmeraldGreen
+            color = MaterialTheme.colorScheme.tertiary
         )
 
         // Find/Search outliner card
         Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -1663,6 +1671,7 @@ fun HistoryScreen(viewModel: GemsViewModel) {
                 items(txs, key = { it.id }) { tx ->
                     var isExpanded by remember { mutableStateOf(false) }
                     Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
                         shape = RoundedCornerShape(12.dp),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                         modifier = Modifier
@@ -1682,11 +1691,11 @@ fun HistoryScreen(viewModel: GemsViewModel) {
                                             .size(40.dp)
                                             .background(
                                                 color = when (tx.source) {
-                                                    "Gem Box" -> GoldGold.copy(alpha = 0.2f)
-                                                    "Pohon", "Rumput" -> EmeraldGreen.copy(alpha = 0.2f)
+                                                    "Gem Box" -> MaterialTheme.colorScheme.secondary.copy(alpha = 0.2f)
+                                                    "Pohon", "Rumput" -> MaterialTheme.colorScheme.tertiary.copy(alpha = 0.2f)
                                                     "Batu" -> Color.Gray.copy(alpha = 0.2f)
                                                     "Penjualan Kitab", "Penjualan Mantra" -> Color(0xFFA78BFA).copy(alpha = 0.2f)
-                                                    else -> OrangePrimary.copy(alpha = 0.2f)
+                                                    else -> MaterialTheme.colorScheme.primary.copy(alpha = 0.2f)
                                                 },
                                                 shape = RoundedCornerShape(10.dp)
                                             ),
@@ -1704,11 +1713,11 @@ fun HistoryScreen(viewModel: GemsViewModel) {
                                             },
                                             contentDescription = null,
                                             tint = when (tx.source) {
-                                                "Gem Box" -> GoldGold
-                                                "Pohon", "Rumput" -> EmeraldGreen
+                                                "Gem Box" -> MaterialTheme.colorScheme.secondary
+                                                "Pohon", "Rumput" -> MaterialTheme.colorScheme.tertiary
                                                 "Batu" -> Color.Gray
                                                 "Penjualan Kitab", "Penjualan Mantra" -> Color(0xFFA78BFA)
-                                                else -> OrangePrimary
+                                                else -> MaterialTheme.colorScheme.primary
                                             },
                                             modifier = Modifier.size(20.dp)
                                         )
@@ -1741,13 +1750,13 @@ fun HistoryScreen(viewModel: GemsViewModel) {
                                         text = "+${tx.gems}",
                                         fontWeight = FontWeight.Bold,
                                         fontSize = 18.sp,
-                                        color = GoldGold
+                                        color = MaterialTheme.colorScheme.secondary
                                     )
                                     Spacer(modifier = Modifier.width(4.dp))
                                     Icon(
                                         imageVector = Icons.Default.Diamond,
                                         contentDescription = null,
-                                        tint = GoldYellow,
+                                        tint = MaterialTheme.colorScheme.secondary,
                                         modifier = Modifier.size(16.dp)
                                     )
                                 }
@@ -1821,6 +1830,7 @@ fun TargetScreen(viewModel: GemsViewModel) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -1830,7 +1840,7 @@ fun TargetScreen(viewModel: GemsViewModel) {
                     text = "Konfigurasi Target Gems",
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    color = GoldYellow
+                    color = MaterialTheme.colorScheme.secondary
                 )
 
                 Spacer(modifier = Modifier.height(14.dp))
@@ -1853,7 +1863,7 @@ fun TargetScreen(viewModel: GemsViewModel) {
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isSelected) OrangePrimary else MaterialTheme.colorScheme.background,
+                                containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background,
                                 contentColor = if (isSelected) Color.White else MaterialTheme.colorScheme.onBackground
                             )
                         ) {
@@ -1877,7 +1887,7 @@ fun TargetScreen(viewModel: GemsViewModel) {
                             modifier = Modifier.weight(1f),
                             shape = RoundedCornerShape(10.dp),
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = if (isSelected) OrangePrimary else MaterialTheme.colorScheme.background,
+                                containerColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background,
                                 contentColor = if (isSelected) Color.White else MaterialTheme.colorScheme.onBackground
                             )
                         ) {
@@ -1925,7 +1935,7 @@ fun TargetScreen(viewModel: GemsViewModel) {
                     },
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = GoldYellow, contentColor = Color.Black)
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary, contentColor = Color.Black)
                 ) {
                     Text("Terapkan Target Baru", fontWeight = FontWeight.Bold)
                 }
@@ -1934,6 +1944,7 @@ fun TargetScreen(viewModel: GemsViewModel) {
 
         // Active details progress
         Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -1956,7 +1967,7 @@ fun TargetScreen(viewModel: GemsViewModel) {
                             .fillMaxHeight()
                             .fillMaxWidth(progress)
                             .background(
-                                brush = Brush.horizontalGradient(listOf(OrangePrimary, GoldYellow)),
+                                brush = Brush.horizontalGradient(listOf(MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.secondary)),
                                 shape = RoundedCornerShape(8.dp)
                             )
                     )
@@ -1969,13 +1980,13 @@ fun TargetScreen(viewModel: GemsViewModel) {
                     Text(
                         text = "${(progress * 100).toInt()}% Tercapai",
                         fontWeight = FontWeight.Bold,
-                        color = OrangePrimary,
+                        color = MaterialTheme.colorScheme.primary,
                         fontSize = 14.sp
                     )
                     Text(
                         text = "Sisa: $remaining Gems",
                         fontWeight = FontWeight.Bold,
-                        color = GoldYellow,
+                        color = MaterialTheme.colorScheme.secondary,
                         fontSize = 14.sp
                     )
                 }
@@ -2040,13 +2051,14 @@ fun OfflineAIScreen(viewModel: GemsViewModel) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
         ) {
             Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Analytics, "AI Analisa", tint = GoldYellow, modifier = Modifier.size(24.dp))
+                    Icon(Icons.Default.Analytics, "AI Analisa", tint = MaterialTheme.colorScheme.secondary, modifier = Modifier.size(24.dp))
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "Metrik Analisa F2P Desa",
@@ -2060,14 +2072,15 @@ fun OfflineAIScreen(viewModel: GemsViewModel) {
                     .height(1.dp)
                     .background(Color.Gray.copy(alpha = 0.2f)))
 
-                MetricRow(label = "Rata-rata Gems per Hari", value = String.format("%.2f Gems/hari", averageGemsPerDay), color = OrangePrimary)
-                MetricRow(label = "Batas Mulai Tambang (Hari Aktif)", value = "$activeDays hari", color = GoldYellow)
+                MetricRow(label = "Rata-rata Gems per Hari", value = String.format("%.2f Gems/hari", averageGemsPerDay), color = MaterialTheme.colorScheme.primary)
+                MetricRow(label = "Batas Mulai Tambang (Hari Aktif)", value = "$activeDays hari", color = MaterialTheme.colorScheme.secondary)
                 MetricRow(label = "Sisa Proyeksi Target", value = "$remainingGems Gems", color = Color(0xFF60A5FA))
             }
         }
 
         // Proyeksi & Prediksi Card
         Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -2077,7 +2090,7 @@ fun OfflineAIScreen(viewModel: GemsViewModel) {
                     text = "Proyeksi Pencapaian Target",
                     fontWeight = FontWeight.Bold,
                     fontSize = 15.sp,
-                    color = EmeraldGreen
+                    color = MaterialTheme.colorScheme.tertiary
                 )
 
                 // Render dynamic projection prediction tags
@@ -2098,7 +2111,7 @@ fun OfflineAIScreen(viewModel: GemsViewModel) {
                                 text = "TARGET SUDAH TERCAPAI!",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 18.sp,
-                                color = EmeraldGreen
+                                color = MaterialTheme.colorScheme.tertiary
                             )
                         } else if (estimasiHari <= 0) {
                             Text(
@@ -2113,7 +2126,7 @@ fun OfflineAIScreen(viewModel: GemsViewModel) {
                                     text = "~$estimasiHari Hari ",
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 24.sp,
-                                    color = GoldGold
+                                    color = MaterialTheme.colorScheme.secondary
                                 )
                                 Text(
                                     text = "lagi",
@@ -2146,6 +2159,7 @@ fun OfflineAIScreen(viewModel: GemsViewModel) {
 
         // Tren / Trend details card
         Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -2205,9 +2219,46 @@ fun MetricRow(label: String, value: String, color: Color) {
 fun SettingsScreen(viewModel: GemsViewModel) {
     val username by viewModel.username.collectAsState()
     val isDarkOverriden by viewModel.darkTheme.collectAsState()
+    val appThemeState by viewModel.appTheme.collectAsState()
     val currentContext = LocalContext.current
     val clipboardManager = LocalClipboardManager.current
     val scope = rememberCoroutineScope()
+    
+    val createDocumentLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
+        contract = androidx.activity.result.contract.ActivityResultContracts.CreateDocument("application/json"),
+        onResult = { uri ->
+            uri?.let {
+                scope.launch {
+                    val code = viewModel.generateBackup()
+                    currentContext.contentResolver.openOutputStream(it)?.use { outputStream ->
+                        outputStream.write(code.toByteArray())
+                    }
+                    Toast.makeText(currentContext, "Backup berhasil disimpan!", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    )
+
+    val openDocumentLauncher = androidx.activity.compose.rememberLauncherForActivityResult(
+        contract = androidx.activity.result.contract.ActivityResultContracts.OpenDocument(),
+        onResult = { uri ->
+            uri?.let {
+                scope.launch {
+                    try {
+                        val code = currentContext.contentResolver.openInputStream(it)?.bufferedReader()?.use { reader ->
+                            reader.readText()
+                        }
+                        if (code != null) {
+                            viewModel.restoreBackup(code)
+                            Toast.makeText(currentContext, "Data berhasil dipulihkan!", Toast.LENGTH_SHORT).show()
+                        }
+                    } catch (e: Exception) {
+                        Toast.makeText(currentContext, "Gagal membaca file backup", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
+    )
 
     var showEditNameDialog by remember { mutableStateOf(false) }
     var editNameInput by remember { mutableStateOf("") }
@@ -2226,6 +2277,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -2235,7 +2287,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
                     text = "Akun Profil & Nama",
                     fontWeight = FontWeight.Bold,
                     fontSize = 15.sp,
-                    color = GoldYellow
+                    color = MaterialTheme.colorScheme.secondary
                 )
 
                 Row(
@@ -2245,7 +2297,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
                 ) {
                     Column {
                         Text(text = "Username Chief", fontSize = 13.sp)
-                        Text(text = username, fontWeight = FontWeight.Bold, fontSize = 15.sp, color = OrangePrimary)
+                        Text(text = username, fontWeight = FontWeight.Bold, fontSize = 15.sp, color = MaterialTheme.colorScheme.primary)
                     }
                     Button(
                         onClick = {
@@ -2263,6 +2315,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
 
         // Manual theme overrides matching dark/light mode configurations
         Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -2274,51 +2327,70 @@ fun SettingsScreen(viewModel: GemsViewModel) {
                     fontSize = 15.sp
                 )
 
+                var showConfirmRestartDialog by remember { mutableStateOf<String?>(null) }
+                
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
                     Button(
-                        onClick = { viewModel.saveDarkTheme(false) }, // Force light theme
+                        onClick = { if (appThemeState != "default") showConfirmRestartDialog = "default" },
                         modifier = Modifier
                             .weight(1f)
                             .height(38.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (isDarkOverriden == false) OrangePrimary else MaterialTheme.colorScheme.background,
-                            contentColor = if (isDarkOverriden == false) Color.White else MaterialTheme.colorScheme.onBackground
+                            containerColor = if (appThemeState == "default") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background,
+                            contentColor = if (appThemeState == "default") Color.White else MaterialTheme.colorScheme.onBackground
                         ),
                         shape = RoundedCornerShape(10.dp)
                     ) {
-                        Text("Tema Terang", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                        Text("Default", fontSize = 10.sp, fontWeight = FontWeight.Bold)
                     }
 
                     Button(
-                        onClick = { viewModel.saveDarkTheme(true) }, // Force dark theme
+                        onClick = { if (appThemeState != "electro") showConfirmRestartDialog = "electro" },
                         modifier = Modifier
                             .weight(1f)
                             .height(38.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (isDarkOverriden == true) OrangePrimary else MaterialTheme.colorScheme.background,
-                            contentColor = if (isDarkOverriden == true) Color.White else MaterialTheme.colorScheme.onBackground
+                            containerColor = if (appThemeState == "electro") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background,
+                            contentColor = if (appThemeState == "electro") Color.White else MaterialTheme.colorScheme.onBackground
                         ),
                         shape = RoundedCornerShape(10.dp)
                     ) {
-                        Text("Tema Gelap", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                        Text("Electro Dragon", fontSize = 10.sp, fontWeight = FontWeight.Bold)
                     }
-
-                    Button(
-                        onClick = { viewModel.saveDarkTheme(null) }, // System Theme
-                        modifier = Modifier
-                            .weight(1.5f)
-                            .height(38.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = if (isDarkOverriden == null) OrangePrimary else MaterialTheme.colorScheme.background,
-                            contentColor = if (isDarkOverriden == null) Color.White else MaterialTheme.colorScheme.onBackground
-                        ),
-                        shape = RoundedCornerShape(10.dp)
-                    ) {
-                        Text("Default Sistem", fontSize = 10.sp, fontWeight = FontWeight.Bold)
-                    }
+                }
+                
+                if (showConfirmRestartDialog != null) {
+                    AlertDialog(
+                        onDismissRequest = { showConfirmRestartDialog = null },
+                        title = { Text("Ganti Tema") },
+                        text = { Text("Aplikasi akan dimuat ulang untuk menerapkan tema. Lanjutkan?") },
+                        confirmButton = {
+                            TextButton(onClick = { 
+                                val targetTheme = showConfirmRestartDialog!!
+                                scope.launch {
+                                    viewModel.saveAppThemeSync(targetTheme)
+                                    showConfirmRestartDialog = null
+                                    
+                                    // Restart
+                                    val intent = currentContext.packageManager.getLaunchIntentForPackage(currentContext.packageName)
+                                    val componentName = intent?.component
+                                    val mainIntent = android.content.Intent.makeRestartActivityTask(componentName)
+                                    currentContext.startActivity(mainIntent)
+                                    Runtime.getRuntime().exit(0)
+                                }
+                            }) {
+                                Text("Iya")
+                            }
+                        },
+                        dismissButton = {
+                            TextButton(onClick = { showConfirmRestartDialog = null }) {
+                                Text("Tidak")
+                            }
+                        }
+                    )
                 }
             }
         }
@@ -2333,6 +2405,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
         var editGroqKey by remember(groqApiKey) { mutableStateOf(groqApiKey) }
 
         Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -2342,7 +2415,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
                     text = "Konfigurasi Insight AI",
                     fontWeight = FontWeight.Bold,
                     fontSize = 15.sp,
-                    color = GoldYellow
+                    color = MaterialTheme.colorScheme.secondary
                 )
 
                 Row(
@@ -2355,7 +2428,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
                             .weight(1f)
                             .height(38.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (aiMode == "offline") OrangePrimary else MaterialTheme.colorScheme.background,
+                            containerColor = if (aiMode == "offline") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background,
                             contentColor = if (aiMode == "offline") Color.White else MaterialTheme.colorScheme.onBackground
                         ),
                         shape = RoundedCornerShape(10.dp)
@@ -2369,7 +2442,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
                             .weight(1f)
                             .height(38.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = if (aiMode == "online") OrangePrimary else MaterialTheme.colorScheme.background,
+                            containerColor = if (aiMode == "online") MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.background,
                             contentColor = if (aiMode == "online") Color.White else MaterialTheme.colorScheme.onBackground
                         ),
                         shape = RoundedCornerShape(10.dp)
@@ -2437,7 +2510,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
                             Toast.makeText(currentContext, "API Key disimpan!", Toast.LENGTH_SHORT).show()
                         },
                         modifier = Modifier.fillMaxWidth(),
-                        colors = ButtonDefaults.buttonColors(containerColor = GoldYellow, contentColor = Color.Black),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary, contentColor = Color.Black),
                         shape = RoundedCornerShape(10.dp)
                     ) {
                         Text("Simpan API Key", fontWeight = FontWeight.Bold)
@@ -2448,6 +2521,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
 
         // Backup & Restore Area Card (Works 100% offline via safe Base64 clipboards strings copy paste)
         Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -2472,30 +2546,28 @@ fun SettingsScreen(viewModel: GemsViewModel) {
                 ) {
                     Button(
                         onClick = {
-                            scope.launch {
-                                val code = viewModel.generateBackup()
-                                clipboardManager.setText(AnnotatedString(code))
-                                Toast.makeText(currentContext, "Kode Backup disalin ke clipboard!", Toast.LENGTH_SHORT).show()
-                            }
+                            val dateFormat = java.text.SimpleDateFormat("dd-MM-yyyy", java.util.Locale.getDefault())
+                            val dateString = dateFormat.format(java.util.Date())
+                            createDocumentLauncher.launch("coc_backup_${dateString}.json")
                         },
                         modifier = Modifier
                             .weight(1f)
                             .testTag("backup_copy_button"),
-                        colors = ButtonDefaults.buttonColors(containerColor = GoldYellow, contentColor = Color.Black),
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary, contentColor = Color.Black),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Icon(Icons.Default.ContentCopy, null, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.Save, null, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(6.dp))
-                        Text("Salin Backup", fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                        Text("Simpan Backup", fontSize = 11.sp, fontWeight = FontWeight.Bold)
                     }
 
                     Button(
-                        onClick = { showRestoreHelp = true },
+                        onClick = { openDocumentLauncher.launch(arrayOf("application/json", "*/*")) },
                         modifier = Modifier.weight(1f),
                         colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.background, contentColor = MaterialTheme.colorScheme.onBackground),
                         shape = RoundedCornerShape(12.dp)
                     ) {
-                        Icon(Icons.Default.ContentPaste, null, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.FileOpen, null, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(6.dp))
                         Text("Pilih Restore", fontSize = 11.sp, fontWeight = FontWeight.Bold)
                     }
@@ -2505,6 +2577,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
 
         // Dangerous Zones Card
         Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -2558,6 +2631,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
         if (showEditNameDialog) {
             Dialog(onDismissRequest = { showEditNameDialog = false }) {
                 Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
                     modifier = Modifier.padding(16.dp),
                     shape = RoundedCornerShape(16.dp)
                 ) {
@@ -2591,6 +2665,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
         if (showResetTodayPrompt) {
             Dialog(onDismissRequest = { showResetTodayPrompt = false }) {
                 Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
                     modifier = Modifier.padding(16.dp),
                     shape = RoundedCornerShape(16.dp)
                 ) {
@@ -2615,6 +2690,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
         if (showResetAllPrompt) {
             Dialog(onDismissRequest = { showResetAllPrompt = false }) {
                 Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
                     modifier = Modifier.padding(16.dp),
                     shape = RoundedCornerShape(16.dp)
                 ) {
@@ -2639,11 +2715,12 @@ fun SettingsScreen(viewModel: GemsViewModel) {
         if (showRestoreHelp) {
             Dialog(onDismissRequest = { showRestoreHelp = false }) {
                 Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
                     modifier = Modifier.padding(16.dp),
                     shape = RoundedCornerShape(16.dp)
                 ) {
                     Column(modifier = Modifier.padding(20.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                        Text("Restore Data Cadangan", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = GoldYellow)
+                        Text("Restore Data Cadangan", fontWeight = FontWeight.Bold, fontSize = 16.sp, color = MaterialTheme.colorScheme.secondary)
                         Text("Tempel kode Base64 backup Anda di bawah ini dan tekan pulihkan:", fontSize = 12.sp)
 
                         OutlinedTextField(
@@ -2672,7 +2749,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
                                         }
                                     }
                                 }
-                            ) { Text("Pulihkan", fontWeight = FontWeight.Bold, color = OrangePrimary) }
+                            ) { Text("Pulihkan", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary) }
                         }
                     }
                 }
@@ -2697,8 +2774,8 @@ fun AboutScreen(viewModel: GemsViewModel) {
         Box(
             modifier = Modifier
                 .size(100.dp)
-                .background(Color(0xFF27211B), CircleShape)
-                .border(2.dp, GoldGold, CircleShape)
+                .background(MaterialTheme.colorScheme.surface, CircleShape)
+                .border(2.dp, MaterialTheme.colorScheme.secondary, CircleShape)
                 .padding(4.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -2716,7 +2793,7 @@ fun AboutScreen(viewModel: GemsViewModel) {
             text = "COC F2P Gems Tracker",
             fontWeight = FontWeight.Bold,
             fontSize = 20.sp,
-            color = GoldGold
+            color = MaterialTheme.colorScheme.secondary
         )
 
         Text(
@@ -2726,6 +2803,7 @@ fun AboutScreen(viewModel: GemsViewModel) {
         )
 
         Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -2735,7 +2813,7 @@ fun AboutScreen(viewModel: GemsViewModel) {
                     text = "Informasi Pengembang",
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp,
-                    color = GoldYellow
+                    color = MaterialTheme.colorScheme.secondary
                 )
 
                 Box(modifier = Modifier
@@ -2745,7 +2823,7 @@ fun AboutScreen(viewModel: GemsViewModel) {
 
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text("Developer", fontSize = 13.sp)
-                    Text("Maskaav", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = OrangePrimary)
+                    Text("Maskaav", fontWeight = FontWeight.Bold, fontSize = 13.sp, color = MaterialTheme.colorScheme.primary)
                 }
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text("Platform", fontSize = 13.sp)
@@ -2759,6 +2837,7 @@ fun AboutScreen(viewModel: GemsViewModel) {
         }
 
         Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -2788,16 +2867,22 @@ fun AboutScreen(viewModel: GemsViewModel) {
 fun AchievementPopup(milestone: Int, onDismiss: () -> Unit) {
     // Basic dynamic multi-color particle physics for purely native lightweight confetti
     val particlesCount = 45
+
+    val primaryConfetti = MaterialTheme.colorScheme.primary
+    val secondaryConfetti = MaterialTheme.colorScheme.secondary
+    val tertiaryConfetti = MaterialTheme.colorScheme.tertiary
+    
     val particlesList = remember {
         List(particlesCount) {
             val ranX = Random.nextFloat()
             val ranSpeedY = Random.nextFloat() * 12f + 6f
             val ranColor = when (Random.nextInt(4)) {
-                0 -> GoldGold
-                1 -> OrangePrimary
-                2 -> EmeraldGreen
+                0 -> secondaryConfetti
+                1 -> primaryConfetti
+                2 -> tertiaryConfetti
                 else -> Color(0xFF60A5FA)
             }
+
             ConfettiParticle(xOffsetFraction = ranX, speedY = ranSpeedY, color = ranColor)
         }
     }
@@ -2842,13 +2927,14 @@ fun AchievementPopup(milestone: Int, onDismiss: () -> Unit) {
 
             // Central congratulations achievement Card
             Card(
+            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
                 shape = RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(24.dp)
                     .shadow(16.dp, RoundedCornerShape(24.dp))
-                    .border(BorderStroke(2.dp, GoldGold), RoundedCornerShape(24.dp))
+                    .border(BorderStroke(2.dp, MaterialTheme.colorScheme.secondary), RoundedCornerShape(24.dp))
             ) {
                 Column(
                     modifier = Modifier.padding(24.dp),
@@ -2859,7 +2945,7 @@ fun AchievementPopup(milestone: Int, onDismiss: () -> Unit) {
                         modifier = Modifier
                             .size(72.dp)
                             .background(
-                                brush = Brush.radialGradient(listOf(GoldGold, OrangePrimary)),
+                                brush = Brush.radialGradient(listOf(MaterialTheme.colorScheme.secondary, MaterialTheme.colorScheme.primary)),
                                 shape = CircleShape
                             ),
                         contentAlignment = Alignment.Center
@@ -2876,7 +2962,7 @@ fun AchievementPopup(milestone: Int, onDismiss: () -> Unit) {
                         text = "Penghargaan Terbuka!",
                         fontWeight = FontWeight.Bold,
                         fontSize = 22.sp,
-                        color = GoldGold,
+                        color = MaterialTheme.colorScheme.secondary,
                         textAlign = TextAlign.Center
                     )
 
@@ -2894,7 +2980,7 @@ fun AchievementPopup(milestone: Int, onDismiss: () -> Unit) {
                         onClick = onDismiss,
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = OrangeFlame, contentColor = Color.White)
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary, contentColor = Color.White)
                     ) {
                         Text("Terima Kasih, Lanjutkan!", fontWeight = FontWeight.Bold)
                     }
@@ -2942,7 +3028,7 @@ fun PartnerDesaScreen(viewModel: GemsViewModel) {
                         modifier = Modifier
                             .fillMaxWidth(0.85f)
                             .background(
-                                color = if (isUser) Color(0xFFF97316).copy(alpha = 0.9f) else Color(0xFF1E293B),
+                                color = if (isUser) MaterialTheme.colorScheme.primary.copy(alpha = 0.9f) else MaterialTheme.colorScheme.surface,
                                 shape = if (isUser) RoundedCornerShape(16.dp, 16.dp, 4.dp, 16.dp)
                                         else RoundedCornerShape(16.dp, 16.dp, 16.dp, 4.dp)
                             )
@@ -2971,7 +3057,7 @@ fun PartnerDesaScreen(viewModel: GemsViewModel) {
                     ) {
                         Box(
                             modifier = Modifier
-                                .background(Color(0xFF1E293B), RoundedCornerShape(16.dp))
+                                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(16.dp))
                                 .padding(16.dp)
                         ) {
                             CircularProgressIndicator(
@@ -2996,8 +3082,8 @@ fun PartnerDesaScreen(viewModel: GemsViewModel) {
             items(quickActions) { action ->
                 Surface(
                     shape = RoundedCornerShape(50),
-                    color = Color(0xFF25292E),
-                    border = BorderStroke(1.dp, Color(0xFFF97316).copy(alpha = 0.5f)),
+                    color = MaterialTheme.colorScheme.surface,
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)),
                     modifier = Modifier.clickable {
                         viewModel.sendChatMessage("Berikan saran mengenai $action")
                     }
@@ -3017,7 +3103,7 @@ fun PartnerDesaScreen(viewModel: GemsViewModel) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color(0xFF1E1E1E))
+                .background(MaterialTheme.colorScheme.background)
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -3029,10 +3115,10 @@ fun PartnerDesaScreen(viewModel: GemsViewModel) {
                 placeholder = { Text("Tanya Partner Desa...", color = Color.Gray, fontSize = 14.sp) },
                 shape = RoundedCornerShape(24.dp),
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color(0xFFF97316),
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
                     unfocusedBorderColor = Color.White.copy(alpha = 0.1f),
-                    focusedContainerColor = Color(0xFF25292E),
-                    unfocusedContainerColor = Color(0xFF25292E),
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                     focusedTextColor = Color.White,
                     unfocusedTextColor = Color.White
                 ),
@@ -3044,7 +3130,7 @@ fun PartnerDesaScreen(viewModel: GemsViewModel) {
                 modifier = Modifier
                     .size(48.dp)
                     .background(
-                        brush = Brush.linearGradient(listOf(Color(0xFFEA580C), Color(0xFFF97316))),
+                        brush = Brush.linearGradient(listOf(Color(0xFFEA580C), MaterialTheme.colorScheme.primary)),
                         shape = CircleShape
                     )
                     .clickable {

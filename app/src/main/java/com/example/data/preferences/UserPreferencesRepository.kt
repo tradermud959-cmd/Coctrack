@@ -17,6 +17,7 @@ class UserPreferencesRepository(private val context: Context) {
         val KEY_USERNAME = stringPreferencesKey("username")
         val KEY_TARGET_GEMS = intPreferencesKey("target_gems")
         val KEY_DARK_THEME = booleanPreferencesKey("dark_theme")
+        val KEY_APP_THEME = stringPreferencesKey("app_theme")
         val KEY_SHOWN_ACHIEVEMENTS = stringSetPreferencesKey("shown_achievements")
         
         // AI Preferences
@@ -52,6 +53,10 @@ class UserPreferencesRepository(private val context: Context) {
 
     val darkThemeFlow: Flow<Boolean?> = dataStore.data.map { preferences ->
         preferences[KEY_DARK_THEME]
+    }
+
+    val appThemeFlow: Flow<String> = dataStore.data.map { preferences ->
+        preferences[KEY_APP_THEME] ?: "default"
     }
 
     val shownAchievementsFlow: Flow<Set<String>> = dataStore.data.map { preferences ->
@@ -123,6 +128,12 @@ class UserPreferencesRepository(private val context: Context) {
             } else {
                 preferences[KEY_DARK_THEME] = isDark
             }
+        }
+    }
+
+    suspend fun saveAppTheme(theme: String) {
+        dataStore.edit { preferences ->
+            preferences[KEY_APP_THEME] = theme
         }
     }
 

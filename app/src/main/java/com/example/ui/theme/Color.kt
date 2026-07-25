@@ -26,3 +26,11 @@ val LightOnSurface = Color(0xFF292524)
 val EmeraldGreen = Color(0xFF10B981)
 val EmeraldBg = Color(0x3310B981) // Emerald 20% alpha
 
+// Electro Dragon Theme Colors
+val ElectroPrimary = Color(0xFF00E5FF) // Cyan Neon
+val ElectroSecondary = Color(0xFF2979FF) // Blue Neon
+val ElectroBackground = Color(0xFF0A0F1D) // Deep Space Blue
+val ElectroSurface = Color(0xFF111827) // Dark Slate Blue
+val ElectroNeonStroke = Color(0xFF00E5FF)
+
+

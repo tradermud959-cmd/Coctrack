@@ -52,6 +52,9 @@ class GemsViewModel(application: Application) : AndroidViewModel(application) {
     val darkTheme: StateFlow<Boolean?> = preferencesRepo.darkThemeFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
+    val appTheme: StateFlow<String> = preferencesRepo.appThemeFlow
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "default")
+
     val shownAchievements: StateFlow<Set<String>> = preferencesRepo.shownAchievementsFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptySet())
 
@@ -156,6 +159,16 @@ class GemsViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             preferencesRepo.saveDarkTheme(isDark)
         }
+    }
+
+    fun saveAppTheme(theme: String) {
+        viewModelScope.launch {
+            preferencesRepo.saveAppTheme(theme)
+        }
+    }
+
+    suspend fun saveAppThemeSync(theme: String) {
+        preferencesRepo.saveAppTheme(theme)
     }
 
     fun saveAiMode(mode: String) {
