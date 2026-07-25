@@ -14,6 +14,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
+import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -99,31 +100,34 @@ fun MainAppScreen(viewModel: GemsViewModel) {
                             AppScreen.OfflineAI -> "Analisa Heuristik AI"
                             AppScreen.Settings -> "Pengaturan"
                             AppScreen.About -> "Tentang Aplikasi"
+                            AppScreen.Partner -> "Partner Desa"
                             else -> "Gems Tracker"
                         }
-                        TopAppBar(
-                            title = {
-                                Text(
-                                    text = title,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 20.sp
-                                )
-                            },
-                            navigationIcon = {
-                                if (currentScreen != AppScreen.Dashboard) {
-                                    IconButton(onClick = { viewModel.setScreen(AppScreen.Dashboard) }) {
-                                        Icon(
-                                            imageVector = Icons.Default.ArrowBack,
-                                            contentDescription = "Kembali ke Dashboard"
-                                        )
+                        if (currentScreen != AppScreen.Dashboard) {
+                            TopAppBar(
+                                title = {
+                                    Text(
+                                        text = title,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 20.sp
+                                    )
+                                },
+                                navigationIcon = {
+                                    if (currentScreen != AppScreen.Dashboard) {
+                                        IconButton(onClick = { viewModel.setScreen(AppScreen.Dashboard) }) {
+                                            Icon(
+                                                imageVector = Icons.Default.ArrowBack,
+                                                contentDescription = "Kembali ke Dashboard"
+                                            )
+                                        }
                                     }
-                                }
-                            },
-                            colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.background,
-                                titleContentColor = MaterialTheme.colorScheme.onBackground
+                                },
+                                colors = TopAppBarDefaults.topAppBarColors(
+                                    containerColor = MaterialTheme.colorScheme.background,
+                                    titleContentColor = MaterialTheme.colorScheme.onBackground
+                                )
                             )
-                        )
+                        }
                     },
                     bottomBar = {
                         if (currentScreen != AppScreen.Splash) {
@@ -209,6 +213,21 @@ fun MainAppScreen(viewModel: GemsViewModel) {
                             .padding(padding)
                             .background(MaterialTheme.colorScheme.background)
                     ) {
+                        val backgroundResId = when (currentScreen) {
+                            AppScreen.Dashboard -> R.drawable.background_dashboard
+                            AppScreen.Statistics -> R.drawable.background_stats
+                            AppScreen.History -> R.drawable.background_history
+                            AppScreen.Settings -> R.drawable.background_settings
+                            else -> null
+                        }
+                        if (backgroundResId != null) {
+                            androidx.compose.foundation.Image(
+                                painter = painterResource(id = backgroundResId),
+                                contentDescription = "Background",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize().alpha(0.35f)
+                            )
+                        }
                         AnimatedContent(
                             targetState = currentScreen,
                             transitionSpec = {
@@ -225,6 +244,7 @@ fun MainAppScreen(viewModel: GemsViewModel) {
                                 AppScreen.OfflineAI -> OfflineAIScreen(viewModel = viewModel)
                                 AppScreen.Settings -> SettingsScreen(viewModel = viewModel)
                                 AppScreen.About -> AboutScreen(viewModel = viewModel)
+                                AppScreen.Partner -> PartnerDesaScreen(viewModel = viewModel)
                                 else -> {}
                             }
                         }
@@ -479,6 +499,9 @@ fun DashboardScreen(viewModel: GemsViewModel) {
     val totalThisMonth by viewModel.totalGemsThisMonth.collectAsState()
     val totalOverall by viewModel.totalGemsOverall.collectAsState()
     val targetGems by viewModel.targetGems.collectAsState()
+    
+    val activeProfileId by viewModel.activeProfileId.collectAsState()
+    val profileUsernames by viewModel.profileUsernames.collectAsState()
 
     val progress = if (targetGems > 0) {
         (totalOverall.toFloat() / targetGems.toFloat()).coerceIn(0f, 1f)
@@ -490,6 +513,44 @@ fun DashboardScreen(viewModel: GemsViewModel) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        item {
+            Text(
+                text = "COC F2P Gems Tracker",
+                fontWeight = FontWeight.Bold,
+                fontSize = 24.sp,
+                color = Color.White,
+                modifier = Modifier.padding(bottom = 8.dp, top = 8.dp)
+            )
+        }
+        // Profile Selector
+        item {
+            androidx.compose.foundation.lazy.LazyRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(5) { index ->
+                    val profileId = index + 1
+                    val pName = profileUsernames.getOrNull(index)?.takeIf { it.isNotBlank() } ?: "Acc $profileId"
+                    val isSelected = activeProfileId == profileId
+                    
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = if (isSelected) OrangePrimary else Color(0xFF2D1F16),
+                        border = BorderStroke(1.dp, if (isSelected) OrangePrimary else Color.White.copy(alpha = 0.1f)),
+                        modifier = Modifier.clickable { viewModel.setActiveProfile(profileId) }
+                    ) {
+                        Text(
+                            text = pName,
+                            color = if (isSelected) Color.White else Color(0xFF94A3B8),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp,
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                        )
+                    }
+                }
+            }
+        }
+
         // 1. Welcome Header Section (Vibrant Palette style)
         item {
             Row(
@@ -814,9 +875,13 @@ fun DashboardScreen(viewModel: GemsViewModel) {
             }
         }
 
-        // 5. AI Insight Offline Calculator Card (Brushed chocolate-dark background with orange boundary)
+        // 5. AI Insight Offline/Online Calculator Card
         item {
             val txs by viewModel.transactions.collectAsState()
+            val aiMode by viewModel.aiMode.collectAsState()
+            val onlineInsight by viewModel.onlineAiInsight.collectAsState()
+            val isFetchingAi by viewModel.isFetchingAi.collectAsState()
+            
             val activeDays = remember(txs) {
                 if (txs.isEmpty()) 1 else {
                     val firstTime = txs.minOf { it.timestamp }
@@ -858,20 +923,61 @@ fun DashboardScreen(viewModel: GemsViewModel) {
                         )
                     }
 
-                    val textInsight = if (remainingGems == 0) {
-                        "Luar biasa, Chief! Target Anda saat ini telah tuntas tercapai secara penuh."
-                    } else if (estimasiHari <= 0) {
-                        "AI Offline Insight: Masukkan data Gems pertama Anda agar AI dapat memproyeksikan perkiraan hari pencapaian."
-                    } else {
-                        "AI Offline Insight: Berdasarkan rata-rata harian Anda sebesar ${String.format("%.1f", averageGemsPerDay)} Gems/hari, Anda akan mencapai target dalam $estimasiHari hari."
+                    Column(modifier = Modifier.weight(1f)) {
+                        if (aiMode == "online") {
+                            Text(
+                                text = "AI Online Insight:",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.White
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            if (onlineInsight != null) {
+                                Text(
+                                    text = onlineInsight!!,
+                                    fontSize = 12.sp,
+                                    color = Color(0xFFCBD5E1),
+                                    lineHeight = 16.sp
+                                )
+                            } else {
+                                Text(
+                                    text = "Klik tombol di bawah untuk mendapatkan motivasi dan estimasi AI.",
+                                    fontSize = 12.sp,
+                                    color = Color(0xFFCBD5E1),
+                                    lineHeight = 16.sp
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Button(
+                                onClick = { viewModel.fetchOnlineAiInsight(targetGems, totalOverall, averageGemsPerDay) },
+                                enabled = !isFetchingAi,
+                                modifier = Modifier.height(32.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = OrangePrimary, contentColor = Color.White),
+                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 0.dp),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                if (isFetchingAi) {
+                                    CircularProgressIndicator(color = Color.White, modifier = Modifier.size(14.dp), strokeWidth = 2.dp)
+                                } else {
+                                    Text("Minta Insight AI", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                                }
+                            }
+                        } else {
+                            val textInsight = if (remainingGems == 0) {
+                                "Luar biasa, Chief! Target Anda saat ini telah tuntas tercapai secara penuh."
+                            } else if (estimasiHari <= 0) {
+                                "AI Offline Insight: Masukkan data Gems pertama Anda agar AI dapat memproyeksikan perkiraan hari pencapaian."
+                            } else {
+                                "AI Offline Insight: Berdasarkan rata-rata harian Anda sebesar ${String.format("%.1f", averageGemsPerDay)} Gems/hari, Anda akan mencapai target dalam $estimasiHari hari."
+                            }
+                            Text(
+                                text = textInsight,
+                                fontSize = 12.sp,
+                                color = Color(0xFFCBD5E1), // slate-300
+                                lineHeight = 16.sp
+                            )
+                        }
                     }
-
-                    Text(
-                        text = textInsight,
-                        fontSize = 12.sp,
-                        color = Color(0xFFCBD5E1), // slate-300
-                        lineHeight = 16.sp
-                    )
                 }
             }
         }
@@ -947,13 +1053,19 @@ fun DashboardScreen(viewModel: GemsViewModel) {
                     }
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         MenuButton(
+                            title = "Partner Desa",
+                            icon = Icons.Default.ChatBubble,
+                            color = Color(0xFFF59E0B),
+                            onClick = { viewModel.setScreen(AppScreen.Partner) },
+                            modifier = Modifier.weight(1f)
+                        )
+                        MenuButton(
                             title = "Tentang Aplikasi",
                             icon = Icons.Default.Info,
                             color = Color(0xFFA78BFA),
                             onClick = { viewModel.setScreen(AppScreen.About) },
                             modifier = Modifier.weight(1f)
                         )
-                        Spacer(modifier = Modifier.weight(1f))
                     }
                 }
             }
@@ -2211,6 +2323,129 @@ fun SettingsScreen(viewModel: GemsViewModel) {
             }
         }
 
+        // AI Provider Configuration Card
+        val aiMode by viewModel.aiMode.collectAsState()
+        val aiProvider by viewModel.aiProvider.collectAsState()
+        val geminiApiKey by viewModel.geminiApiKey.collectAsState()
+        val groqApiKey by viewModel.groqApiKey.collectAsState()
+        
+        var editGeminiKey by remember(geminiApiKey) { mutableStateOf(geminiApiKey) }
+        var editGroqKey by remember(groqApiKey) { mutableStateOf(groqApiKey) }
+
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(modifier = Modifier.padding(18.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text(
+                    text = "Konfigurasi Insight AI",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 15.sp,
+                    color = GoldYellow
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Button(
+                        onClick = { viewModel.saveAiMode("offline") },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(38.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (aiMode == "offline") OrangePrimary else MaterialTheme.colorScheme.background,
+                            contentColor = if (aiMode == "offline") Color.White else MaterialTheme.colorScheme.onBackground
+                        ),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Text("AI Offline", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    }
+
+                    Button(
+                        onClick = { viewModel.saveAiMode("online") },
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(38.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = if (aiMode == "online") OrangePrimary else MaterialTheme.colorScheme.background,
+                            contentColor = if (aiMode == "online") Color.White else MaterialTheme.colorScheme.onBackground
+                        ),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Text("AI Online", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                    }
+                }
+
+                if (aiMode == "online") {
+                    Text(
+                        text = "Pilih penyedia API yang akan digunakan untuk Online Insight:",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    )
+                    
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        Button(
+                            onClick = { viewModel.saveAiProvider("gemini") },
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(38.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (aiProvider == "gemini") Color(0xFF60A5FA) else MaterialTheme.colorScheme.background,
+                                contentColor = if (aiProvider == "gemini") Color.White else MaterialTheme.colorScheme.onBackground
+                            ),
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Text("Gemini", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                        }
+
+                        Button(
+                            onClick = { viewModel.saveAiProvider("groq") },
+                            modifier = Modifier
+                                .weight(1f)
+                                .height(38.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = if (aiProvider == "groq") Color(0xFF10B981) else MaterialTheme.colorScheme.background,
+                                contentColor = if (aiProvider == "groq") Color.White else MaterialTheme.colorScheme.onBackground
+                            ),
+                            shape = RoundedCornerShape(10.dp)
+                        ) {
+                            Text("Groq", fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                        }
+                    }
+
+                    OutlinedTextField(
+                        value = if (aiProvider == "gemini") editGeminiKey else editGroqKey,
+                        onValueChange = { 
+                            if (aiProvider == "gemini") editGeminiKey = it else editGroqKey = it 
+                        },
+                        label = { Text("API Key ${if (aiProvider == "gemini") "Gemini" else "Groq"}") },
+                        placeholder = { Text("Masukkan API Key Anda") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    
+                    Button(
+                        onClick = { 
+                            if (aiProvider == "gemini") viewModel.saveGeminiApiKey(editGeminiKey) 
+                            else viewModel.saveGroqApiKey(editGroqKey)
+                            Toast.makeText(currentContext, "API Key disimpan!", Toast.LENGTH_SHORT).show()
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(containerColor = GoldYellow, contentColor = Color.Black),
+                        shape = RoundedCornerShape(10.dp)
+                    ) {
+                        Text("Simpan API Key", fontWeight = FontWeight.Bold)
+                    }
+                }
+            }
+        }
+
         // Backup & Restore Area Card (Works 100% offline via safe Base64 clipboards strings copy paste)
         Card(
             shape = RoundedCornerShape(16.dp),
@@ -2664,6 +2899,168 @@ fun AchievementPopup(milestone: Int, onDismiss: () -> Unit) {
                         Text("Terima Kasih, Lanjutkan!", fontWeight = FontWeight.Bold)
                     }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun PartnerDesaScreen(viewModel: GemsViewModel) {
+    val chatMessages by viewModel.chatMessages.collectAsState()
+    val isChatLoading by viewModel.isChatLoading.collectAsState()
+    var inputText by remember { mutableStateOf("") }
+    val listState = androidx.compose.foundation.lazy.rememberLazyListState()
+
+    LaunchedEffect(chatMessages.size) {
+        if (chatMessages.isNotEmpty()) {
+            listState.animateScrollToItem(chatMessages.size - 1)
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xFF121212))
+    ) {
+        // Chat Area
+        androidx.compose.foundation.lazy.LazyColumn(
+            state = listState,
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            contentPadding = PaddingValues(top = 16.dp, bottom = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            items(chatMessages) { message ->
+                val isUser = message.role == "user"
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = if (isUser) Arrangement.End else Arrangement.Start
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(0.85f)
+                            .background(
+                                color = if (isUser) Color(0xFFF97316).copy(alpha = 0.9f) else Color(0xFF1E293B),
+                                shape = if (isUser) RoundedCornerShape(16.dp, 16.dp, 4.dp, 16.dp)
+                                        else RoundedCornerShape(16.dp, 16.dp, 16.dp, 4.dp)
+                            )
+                            .border(
+                                width = 1.dp,
+                                color = if (isUser) Color(0xFFFB923C) else Color(0xFF10B981).copy(alpha = 0.5f),
+                                shape = if (isUser) RoundedCornerShape(16.dp, 16.dp, 4.dp, 16.dp)
+                                        else RoundedCornerShape(16.dp, 16.dp, 16.dp, 4.dp)
+                            )
+                            .padding(14.dp)
+                    ) {
+                        Text(
+                            text = message.content,
+                            color = Color.White,
+                            fontSize = 14.sp,
+                            lineHeight = 20.sp
+                        )
+                    }
+                }
+            }
+            if (isChatLoading) {
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .background(Color(0xFF1E293B), RoundedCornerShape(16.dp))
+                                .padding(16.dp)
+                        ) {
+                            CircularProgressIndicator(
+                                color = Color(0xFF10B981),
+                                modifier = Modifier.size(20.dp),
+                                strokeWidth = 2.dp
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        // Quick Action Capsules
+        androidx.compose.foundation.lazy.LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            val quickActions = listOf("Edukasi Chief", "Prioritas Upgrade", "Formasi Base", "Saran Pasukan", "Tips Hero")
+            items(quickActions) { action ->
+                Surface(
+                    shape = RoundedCornerShape(50),
+                    color = Color(0xFF25292E),
+                    border = BorderStroke(1.dp, Color(0xFFF97316).copy(alpha = 0.5f)),
+                    modifier = Modifier.clickable {
+                        viewModel.sendChatMessage("Berikan saran mengenai $action")
+                    }
+                ) {
+                    Text(
+                        text = action,
+                        color = Color(0xFFFB923C),
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+                }
+            }
+        }
+
+        // Input Area
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color(0xFF1E1E1E))
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            OutlinedTextField(
+                value = inputText,
+                onValueChange = { inputText = it },
+                modifier = Modifier.weight(1f),
+                placeholder = { Text("Tanya Partner Desa...", color = Color.Gray, fontSize = 14.sp) },
+                shape = RoundedCornerShape(24.dp),
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color(0xFFF97316),
+                    unfocusedBorderColor = Color.White.copy(alpha = 0.1f),
+                    focusedContainerColor = Color(0xFF25292E),
+                    unfocusedContainerColor = Color(0xFF25292E),
+                    focusedTextColor = Color.White,
+                    unfocusedTextColor = Color.White
+                ),
+                singleLine = true,
+                maxLines = 1,
+            )
+
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .background(
+                        brush = Brush.linearGradient(listOf(Color(0xFFEA580C), Color(0xFFF97316))),
+                        shape = CircleShape
+                    )
+                    .clickable {
+                        if (inputText.isNotBlank() && !isChatLoading) {
+                            viewModel.sendChatMessage(inputText)
+                            inputText = ""
+                        }
+                    },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.Send,
+                    contentDescription = "Send",
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
             }
         }
     }

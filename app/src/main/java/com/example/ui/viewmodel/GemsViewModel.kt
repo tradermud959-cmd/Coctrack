@@ -13,6 +13,12 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
+data class ChatMessage(
+    val id: String = java.util.UUID.randomUUID().toString(),
+    val role: String,
+    val content: String
+)
+
 sealed interface AppScreen {
     object Splash : AppScreen
     object Dashboard : AppScreen
@@ -23,6 +29,7 @@ sealed interface AppScreen {
     object OfflineAI : AppScreen
     object Settings : AppScreen
     object About : AppScreen
+    object Partner : AppScreen
 }
 
 class GemsViewModel(application: Application) : AndroidViewModel(application) {
@@ -47,6 +54,18 @@ class GemsViewModel(application: Application) : AndroidViewModel(application) {
 
     val shownAchievements: StateFlow<Set<String>> = preferencesRepo.shownAchievementsFlow
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptySet())
+
+    val aiMode: StateFlow<String> = preferencesRepo.aiModeFlow
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "offline")
+
+    val aiProvider: StateFlow<String> = preferencesRepo.aiProviderFlow
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "gemini")
+
+    val geminiApiKey: StateFlow<String> = preferencesRepo.geminiApiKeyFlow
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
+
+    val groqApiKey: StateFlow<String> = preferencesRepo.groqApiKeyFlow
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
 
     // All local transactions
     val transactions: StateFlow<List<GemTransaction>> = repository.allTransactions
@@ -106,21 +125,60 @@ class GemsViewModel(application: Application) : AndroidViewModel(application) {
         _currentScreen.value = screen
     }
 
+    val activeProfileId: StateFlow<Int> = preferencesRepo.activeProfileIdFlow
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 1)
+
+    val profileUsernames: StateFlow<List<String>> = combine(
+        (1..5).map { id -> preferencesRepo.getUsernameForProfile(id) }
+    ) { names ->
+        names.toList()
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), List(5) { "" })
+
+    fun setActiveProfile(profileId: Int) {
+        viewModelScope.launch {
+            preferencesRepo.saveActiveProfileId(profileId)
+        }
+    }
+
     fun saveUsername(name: String) {
         viewModelScope.launch {
-            preferencesRepo.saveUsername(name)
+            preferencesRepo.saveUsername(activeProfileId.value, name)
         }
     }
 
     fun saveTargetGems(target: Int) {
         viewModelScope.launch {
-            preferencesRepo.saveTargetGems(target)
+            preferencesRepo.saveTargetGems(activeProfileId.value, target)
         }
     }
 
     fun saveDarkTheme(isDark: Boolean?) {
         viewModelScope.launch {
             preferencesRepo.saveDarkTheme(isDark)
+        }
+    }
+
+    fun saveAiMode(mode: String) {
+        viewModelScope.launch {
+            preferencesRepo.saveAiMode(mode)
+        }
+    }
+
+    fun saveAiProvider(provider: String) {
+        viewModelScope.launch {
+            preferencesRepo.saveAiProvider(provider)
+        }
+    }
+
+    fun saveGeminiApiKey(key: String) {
+        viewModelScope.launch {
+            preferencesRepo.saveGeminiApiKey(key)
+        }
+    }
+
+    fun saveGroqApiKey(key: String) {
+        viewModelScope.launch {
+            preferencesRepo.saveGroqApiKey(key)
         }
     }
 
@@ -180,6 +238,148 @@ class GemsViewModel(application: Application) : AndroidViewModel(application) {
             showNotification("Format backup tidak valid!")
         }
         return success
+    }
+    
+    // Online AI Insight
+    private val _onlineAiInsight = MutableStateFlow<String?>(null)
+    val onlineAiInsight: StateFlow<String?> = _onlineAiInsight.asStateFlow()
+
+    private val _isFetchingAi = MutableStateFlow(false)
+    val isFetchingAi: StateFlow<Boolean> = _isFetchingAi.asStateFlow()
+
+    // Chatbot State
+    private val _chatMessages = MutableStateFlow<List<ChatMessage>>(emptyList())
+    val chatMessages: StateFlow<List<ChatMessage>> = _chatMessages.asStateFlow()
+
+    private val _isChatLoading = MutableStateFlow(false)
+    val isChatLoading: StateFlow<Boolean> = _isChatLoading.asStateFlow()
+
+    fun clearChat() {
+        _chatMessages.value = emptyList()
+    }
+
+    fun sendChatMessage(message: String) {
+        val userMsg = ChatMessage(role = "user", content = message)
+        _chatMessages.value = _chatMessages.value + userMsg
+
+        val mode = aiMode.value
+        val provider = aiProvider.value
+        val geminiKey = geminiApiKey.value
+        val groqKey = groqApiKey.value
+
+        if (mode == "offline") {
+            _chatMessages.value = _chatMessages.value + ChatMessage(role = "model", content = "Mode AI sedang Offline. Silakan ubah ke Online di menu Settings dan masukkan API Key untuk menggunakan Partner Desa.")
+            return
+        }
+
+        if (provider == "gemini" && geminiKey.isBlank()) {
+            _chatMessages.value = _chatMessages.value + ChatMessage(role = "model", content = "API Key Gemini belum diatur. Silakan isi di menu Settings.")
+            return
+        }
+        if (provider == "groq" && groqKey.isBlank()) {
+            _chatMessages.value = _chatMessages.value + ChatMessage(role = "model", content = "API Key Groq belum diatur. Silakan isi di menu Settings.")
+            return
+        }
+
+        val systemInstruction = "Kamu adalah Partner Desa, asisten ahli untuk game Clash of Clans. Berikan saran yang singkat, padat, dan berguna mengenai upgrade bangunan, pahlawan, mantra, pasukan, atau strategi. Gunakan bahasa Indonesia yang ramah dan bersemangat ala Chief COC. Ingat ini percakapan antara kamu dan Chief."
+
+        viewModelScope.launch {
+            _isChatLoading.value = true
+            try {
+                if (provider == "gemini") {
+                    // Gemini format
+                    val contents = _chatMessages.value.map { msg ->
+                        com.example.data.api.GeminiContent(
+                            role = if (msg.role == "user") "user" else "model",
+                            parts = listOf(com.example.data.api.GeminiPart(text = msg.content))
+                        )
+                    }.toMutableList()
+                    // Prefix first message with system prompt since free Gemini might not strictly separate system role well without system_instruction block.
+                    val firstUserIndex = contents.indexOfFirst { it.role == "user" }
+                    if (firstUserIndex != -1) {
+                        contents[firstUserIndex] = contents[firstUserIndex].copy(
+                            parts = listOf(com.example.data.api.GeminiPart(text = "$systemInstruction\n\n${contents[firstUserIndex].parts.first().text}"))
+                        )
+                    } else {
+                        contents.add(0, com.example.data.api.GeminiContent(role = "user", parts = listOf(com.example.data.api.GeminiPart(text = systemInstruction))))
+                    }
+                    
+                    val req = com.example.data.api.GeminiRequest(contents = contents)
+                    val url = "v1beta/models/gemini-1.5-flash:generateContent"
+                    val res = com.example.data.api.NetworkModule.aiApiService.generateWithGemini(url, geminiKey, req)
+                    val text = res.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
+                    _chatMessages.value = _chatMessages.value + ChatMessage(role = "model", content = text ?: "Gagal mendapatkan respon dari Gemini.")
+                } else if (provider == "groq") {
+                    val messages = mutableListOf(com.example.data.api.GroqMessage(role = "system", content = systemInstruction))
+                    messages.addAll(_chatMessages.value.map { msg ->
+                        com.example.data.api.GroqMessage(
+                            role = if (msg.role == "user") "user" else "assistant",
+                            content = msg.content
+                        )
+                    })
+                    val req = com.example.data.api.GroqRequest(messages = messages)
+                    val res = com.example.data.api.NetworkModule.aiApiService.generateWithGroq("Bearer $groqKey", req)
+                    val text = res.choices?.firstOrNull()?.message?.content
+                    _chatMessages.value = _chatMessages.value + ChatMessage(role = "model", content = text ?: "Gagal mendapatkan respon dari Groq.")
+                }
+            } catch (e: Exception) {
+                _chatMessages.value = _chatMessages.value + ChatMessage(role = "model", content = "Error koneksi: ${e.message}")
+            } finally {
+                _isChatLoading.value = false
+            }
+        }
+    }
+
+    fun fetchOnlineAiInsight(target: Int, total: Int, avg: Double) {
+        val mode = aiMode.value
+        if (mode == "offline") return
+        
+        val provider = aiProvider.value
+        val geminiKey = geminiApiKey.value
+        val groqKey = groqApiKey.value
+
+        if (provider == "gemini" && geminiKey.isBlank()) {
+            _onlineAiInsight.value = "Gemini API Key belum diatur."
+            return
+        }
+        if (provider == "groq" && groqKey.isBlank()) {
+            _onlineAiInsight.value = "Groq API Key belum diatur."
+            return
+        }
+
+        val prompt = "Saya sedang mengumpulkan gems di game Clash of Clans. Target saya adalah $target gems, dan saat ini saya memiliki $total gems. Rata-rata pendapatan harian saya adalah ${String.format("%.1f", avg)} gems/hari. Berikan kalimat singkat (maks 2 kalimat) motivasi bergaya karakter game atau AI asisten mengenai estimasi waktu saya bisa mencapai target ini."
+
+        viewModelScope.launch {
+            _isFetchingAi.value = true
+            try {
+                if (provider == "gemini") {
+                    val req = com.example.data.api.GeminiRequest(
+                        contents = listOf(
+                            com.example.data.api.GeminiContent(
+                                parts = listOf(com.example.data.api.GeminiPart(text = prompt))
+                            )
+                        )
+                    )
+                    val url = "v1beta/models/gemini-1.5-flash:generateContent"
+                    val res = com.example.data.api.NetworkModule.aiApiService.generateWithGemini(url, geminiKey, req)
+                    val text = res.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
+                    _onlineAiInsight.value = text ?: "Gagal mendapatkan insight dari Gemini."
+                } else if (provider == "groq") {
+                    val req = com.example.data.api.GroqRequest(
+                        messages = listOf(
+                            com.example.data.api.GroqMessage(content = prompt)
+                        )
+                    )
+                    val res = com.example.data.api.NetworkModule.aiApiService.generateWithGroq("Bearer $groqKey", req)
+                    val text = res.choices?.firstOrNull()?.message?.content
+                    _onlineAiInsight.value = text ?: "Gagal mendapatkan insight dari Groq."
+                }
+            } catch (e: Exception) {
+                _onlineAiInsight.value = "Error koneksi: ${e.message}"
+            } finally {
+                _isFetchingAi.value = false
+            }
+        }
     }
 
     // Computed Stats values
