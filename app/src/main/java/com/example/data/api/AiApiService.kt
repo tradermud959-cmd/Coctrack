@@ -6,7 +6,10 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 import retrofit2.http.Url
 
+import com.squareup.moshi.Json
+
 data class GeminiRequest(
+    @Json(name = "system_instruction") val systemInstruction: GeminiContent? = null,
     val contents: List<GeminiContent>
 )
 

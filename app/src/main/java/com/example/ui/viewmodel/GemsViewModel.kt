@@ -299,25 +299,32 @@ class GemsViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             _isChatLoading.value = true
             try {
-                if (provider == "gemini") {
-                    // Gemini format
-                    val contents = _chatMessages.value.map { msg ->
-                        com.example.data.api.GeminiContent(
-                            role = if (msg.role == "user") "user" else "model",
-                            parts = listOf(com.example.data.api.GeminiPart(text = msg.content))
-                        )
-                    }.toMutableList()
-                    // Prefix first message with system prompt since free Gemini might not strictly separate system role well without system_instruction block.
-                    val firstUserIndex = contents.indexOfFirst { it.role == "user" }
-                    if (firstUserIndex != -1) {
-                        contents[firstUserIndex] = contents[firstUserIndex].copy(
-                            parts = listOf(com.example.data.api.GeminiPart(text = "$systemInstruction\n\n${contents[firstUserIndex].parts.first().text}"))
-                        )
-                    } else {
-                        contents.add(0, com.example.data.api.GeminiContent(role = "user", parts = listOf(com.example.data.api.GeminiPart(text = systemInstruction))))
+                                if (provider == "gemini") {
+                    // Combine consecutive messages with the same role
+                    val contents = mutableListOf<com.example.data.api.GeminiContent>()
+                    for (msg in _chatMessages.value) {
+                        val role = if (msg.role == "user") "user" else "model"
+                        if (contents.isNotEmpty() && contents.last().role == role) {
+                            val lastPartText = contents.last().parts.first().text
+                            contents[contents.size - 1] = contents.last().copy(
+                                parts = listOf(com.example.data.api.GeminiPart(text = lastPartText + "\n" + msg.content))
+                            )
+                        } else {
+                            contents.add(
+                                com.example.data.api.GeminiContent(
+                                    role = role,
+                                    parts = listOf(com.example.data.api.GeminiPart(text = msg.content))
+                                )
+                            )
+                        }
                     }
                     
-                    val req = com.example.data.api.GeminiRequest(contents = contents)
+                    val req = com.example.data.api.GeminiRequest(
+                        systemInstruction = com.example.data.api.GeminiContent(
+                            parts = listOf(com.example.data.api.GeminiPart(text = systemInstruction))
+                        ),
+                        contents = contents
+                    )
                     val url = "v1beta/models/gemini-1.5-flash:generateContent"
                     val res = com.example.data.api.NetworkModule.aiApiService.generateWithGemini(url, geminiKey, req)
                     val text = res.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text

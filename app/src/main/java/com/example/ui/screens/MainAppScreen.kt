@@ -17,6 +17,9 @@ import androidx.compose.material.icons.outlined.*
 import androidx.compose.material.icons.automirrored.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.composed
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -52,6 +55,32 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.ceil
 import kotlin.random.Random
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+
+@Composable
+fun NeonCard(
+    modifier: Modifier = Modifier,
+    shape: androidx.compose.ui.graphics.Shape = CardDefaults.shape,
+    colors: CardColors = CardDefaults.cardColors(),
+    elevation: CardElevation = CardDefaults.cardElevation(),
+    border: BorderStroke? = null,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Card(
+        modifier = modifier.animatedNeonBorder(
+            isElectro = com.example.ui.theme.LocalAppTheme.current == "electro",
+            primaryColor = MaterialTheme.colorScheme.primary,
+            secondaryColor = MaterialTheme.colorScheme.secondary
+        ),
+        shape = shape,
+        colors = colors,
+        elevation = elevation,
+        border = border,
+        content = content
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -371,8 +400,7 @@ fun UsernameDialog(onSave: (String) -> Unit) {
         onDismissRequest = {}, // Force fill username, mandatory field
         properties = DialogProperties(dismissOnBackPress = false, dismissOnClickOutside = false)
     ) {
-        Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+        NeonCard(
             shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier
@@ -597,8 +625,7 @@ fun DashboardScreen(viewModel: GemsViewModel) {
         // 2. Total Gems Card (Vibrant Card containing radial glow & emerald confirmation check)
         item {
             val txs by viewModel.transactions.collectAsState()
-            Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+            NeonCard(
                 shape = RoundedCornerShape(24.dp), // rounded-3xl
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
                 modifier = Modifier
@@ -802,8 +829,7 @@ fun DashboardScreen(viewModel: GemsViewModel) {
         // 4. Target Progress (Orange/Gold linear bar with custom italic summaries)
         item {
             val remaining = (targetGems - totalOverall).coerceAtLeast(0)
-            Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+            NeonCard(
                 shape = RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
                 modifier = Modifier
@@ -980,8 +1006,7 @@ fun DashboardScreen(viewModel: GemsViewModel) {
 
         // 6. Subgrid navigation menu for quick feature jumps
         item {
-            Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+            NeonCard(
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
                 modifier = Modifier
@@ -1078,9 +1103,8 @@ fun StatBox(
     color: Color,
     modifier: Modifier = Modifier
 ) {
-    Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
-        shape = RoundedCornerShape(12.dp),
+    NeonCard(
+                    shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         modifier = modifier
     ) {
@@ -1116,9 +1140,8 @@ fun MenuButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
-        shape = RoundedCornerShape(12.dp),
+    NeonCard(
+                    shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         modifier = modifier
             .height(72.dp)
@@ -1187,8 +1210,7 @@ fun UpdateGemsScreen(viewModel: GemsViewModel) {
             color = MaterialTheme.colorScheme.tertiary
         )
 
-        Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+        NeonCard(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -1344,8 +1366,7 @@ fun StatisticsScreen(viewModel: GemsViewModel) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+        NeonCard(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -1385,8 +1406,7 @@ fun StatisticsScreen(viewModel: GemsViewModel) {
         }
 
         // Summary details panel
-        Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+        NeonCard(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -1430,8 +1450,7 @@ fun StatisticsScreen(viewModel: GemsViewModel) {
         }
 
         // Beautiful Graphic Canvas Card
-        Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+        NeonCard(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -1599,8 +1618,7 @@ fun HistoryScreen(viewModel: GemsViewModel) {
         )
 
         // Find/Search outliner card
-        Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+        NeonCard(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -1670,8 +1688,7 @@ fun HistoryScreen(viewModel: GemsViewModel) {
             ) {
                 items(txs, key = { it.id }) { tx ->
                     var isExpanded by remember { mutableStateOf(false) }
-                    Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+                    NeonCard(
                         shape = RoundedCornerShape(12.dp),
                         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                         modifier = Modifier
@@ -1829,8 +1846,7 @@ fun TargetScreen(viewModel: GemsViewModel) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+        NeonCard(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -1943,8 +1959,7 @@ fun TargetScreen(viewModel: GemsViewModel) {
         }
 
         // Active details progress
-        Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+        NeonCard(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -2050,8 +2065,7 @@ fun OfflineAIScreen(viewModel: GemsViewModel) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+        NeonCard(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -2079,8 +2093,7 @@ fun OfflineAIScreen(viewModel: GemsViewModel) {
         }
 
         // Proyeksi & Prediksi Card
-        Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+        NeonCard(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -2158,8 +2171,7 @@ fun OfflineAIScreen(viewModel: GemsViewModel) {
         }
 
         // Tren / Trend details card
-        Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+        NeonCard(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -2276,8 +2288,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+        NeonCard(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -2314,8 +2325,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
         }
 
         // Manual theme overrides matching dark/light mode configurations
-        Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+        NeonCard(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -2404,8 +2414,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
         var editGeminiKey by remember(geminiApiKey) { mutableStateOf(geminiApiKey) }
         var editGroqKey by remember(groqApiKey) { mutableStateOf(groqApiKey) }
 
-        Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+        NeonCard(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -2520,8 +2529,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
         }
 
         // Backup & Restore Area Card (Works 100% offline via safe Base64 clipboards strings copy paste)
-        Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+        NeonCard(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -2576,8 +2584,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
         }
 
         // Dangerous Zones Card
-        Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+        NeonCard(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -2630,8 +2637,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
         // Edit profile username Dialog popup
         if (showEditNameDialog) {
             Dialog(onDismissRequest = { showEditNameDialog = false }) {
-                Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+                NeonCard(
                     modifier = Modifier.padding(16.dp),
                     shape = RoundedCornerShape(16.dp)
                 ) {
@@ -2664,8 +2670,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
         // Confirm Today resets Dialog
         if (showResetTodayPrompt) {
             Dialog(onDismissRequest = { showResetTodayPrompt = false }) {
-                Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+                NeonCard(
                     modifier = Modifier.padding(16.dp),
                     shape = RoundedCornerShape(16.dp)
                 ) {
@@ -2689,8 +2694,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
         // Confirm heavy resets Dialog
         if (showResetAllPrompt) {
             Dialog(onDismissRequest = { showResetAllPrompt = false }) {
-                Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+                NeonCard(
                     modifier = Modifier.padding(16.dp),
                     shape = RoundedCornerShape(16.dp)
                 ) {
@@ -2714,8 +2718,7 @@ fun SettingsScreen(viewModel: GemsViewModel) {
         // Restore Help dialog pasting textbox
         if (showRestoreHelp) {
             Dialog(onDismissRequest = { showRestoreHelp = false }) {
-                Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+                NeonCard(
                     modifier = Modifier.padding(16.dp),
                     shape = RoundedCornerShape(16.dp)
                 ) {
@@ -2802,8 +2805,7 @@ fun AboutScreen(viewModel: GemsViewModel) {
             color = Color.Gray
         )
 
-        Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+        NeonCard(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -2836,8 +2838,7 @@ fun AboutScreen(viewModel: GemsViewModel) {
             }
         }
 
-        Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+        NeonCard(
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             modifier = Modifier.fillMaxWidth()
@@ -2926,8 +2927,7 @@ fun AchievementPopup(milestone: Int, onDismiss: () -> Unit) {
             }
 
             // Central congratulations achievement Card
-            Card(
-            border = if (com.example.ui.theme.LocalAppTheme.current == "electro") BorderStroke(1.dp, MaterialTheme.colorScheme.primary) else null,
+            NeonCard(
                 shape = RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 modifier = Modifier
@@ -3159,3 +3159,53 @@ class ConfettiParticle(
     val color: Color,
     var currentY: Float = -20f
 )
+
+
+
+fun Modifier.animatedNeonBorder(
+    isElectro: Boolean,
+    primaryColor: androidx.compose.ui.graphics.Color,
+    secondaryColor: androidx.compose.ui.graphics.Color,
+    cornerRadius: androidx.compose.ui.unit.Dp = 16.dp,
+    borderWidth: androidx.compose.ui.unit.Dp = 2.dp
+): Modifier = composed {
+    if (!isElectro) return@composed this
+
+    val infiniteTransition = androidx.compose.animation.core.rememberInfiniteTransition(label = "neon_rotation")
+    val offsetProgress by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = androidx.compose.animation.core.infiniteRepeatable(
+            animation = androidx.compose.animation.core.tween(3000, easing = androidx.compose.animation.core.LinearEasing),
+            repeatMode = androidx.compose.animation.core.RepeatMode.Restart
+        ),
+        label = "neon_offset"
+    )
+
+    this.then(
+        androidx.compose.ui.Modifier.drawWithContent {
+            drawContent()
+            val strokeWidthPx = borderWidth.toPx()
+            val radiusPx = cornerRadius.toPx()
+            
+            val startX = if (offsetProgress < 0.5f) offsetProgress * 2 * size.width else (1f - (offsetProgress - 0.5f) * 2) * size.width
+            val startY = if (offsetProgress < 0.5f) 0f else size.height
+            val endX = size.width - startX
+            val endY = size.height - startY
+            
+            val brush = androidx.compose.ui.graphics.Brush.linearGradient(
+                colors = listOf(primaryColor, secondaryColor, primaryColor),
+                start = androidx.compose.ui.geometry.Offset(startX, startY),
+                end = androidx.compose.ui.geometry.Offset(endX, endY)
+            )
+
+            drawRoundRect(
+                brush = brush,
+                topLeft = androidx.compose.ui.geometry.Offset(strokeWidthPx / 2, strokeWidthPx / 2),
+                size = androidx.compose.ui.geometry.Size(size.width - strokeWidthPx, size.height - strokeWidthPx),
+                cornerRadius = androidx.compose.ui.geometry.CornerRadius(radiusPx, radiusPx),
+                style = Stroke(strokeWidthPx)
+            )
+        }
+    )
+}
