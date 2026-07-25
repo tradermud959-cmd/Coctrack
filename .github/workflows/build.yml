@@ -1,39 +1,68 @@
-name: Build APK
-
+name: Build Debug APK
 on:
   workflow_dispatch:
+    inputs:
+      project:
+        description: 'Project type: "android" for native Gradle, "flutter" for Flutter'
+        required: true
+        default: 'android'
 
 jobs:
-  build:
+  build-debug:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Java
+      - name: Set up JDK 17
+        if: ${{ github.event.inputs.project == 'android' }}
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: 17
+          java-version: '17'
 
-      - name: Generate debug keystore
+      - name: Cache Gradle
+        if: ${{ github.event.inputs.project == 'android' }}
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*','**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Grant execute permission for gradlew
+        if: ${{ github.event.inputs.project == 'android' }}
+        run: chmod +x ./gradlew
+
+      - name: Build Android Gradle debug APK
+        if: ${{ github.event.inputs.project == 'android' }}
         run: |
-          keytool -genkeypair \
-            -keystore debug.keystore \
-            -storepass android \
-            -alias androiddebugkey \
-            -keypass android \
-            -keyalg RSA \
-            -keysize 2048 \
-            -validity 10000 \
-            -dname "CN=Android Debug,O=Android,C=US"
+          set -e
+          ./gradlew assembleDebug --no-daemon
+        env:
+          JAVA_TOOL_OPTIONS: "-Xmx2g"
 
-      - name: Build APK
-        run: chmod +x gradlew && ./gradlew assembleDebug
+      - name: Set up Flutter
+        if: ${{ github.event.inputs.project == 'flutter' }}
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'stable'
 
-      - name: Upload APK
+      - name: Install Flutter dependencies
+        if: ${{ github.event.inputs.project == 'flutter' }}
+        run: flutter pub get
+
+      - name: Build Flutter debug APK
+        if: ${{ github.event.inputs.project == 'flutter' }}
+        run: flutter build apk --debug
+
+      - name: Upload debug APK artifact
+        if: ${{ github.event.inputs.project == 'android' || github.event.inputs.project == 'flutter' }}
         uses: actions/upload-artifact@v4
         with:
-          name: APK-debug
-          path: app/build/outputs/apk/debug/*.apk
+          name: app-debug-apk
+          path: |
+            app/build/outputs/apk/debug/*.apk
+            build/app/outputs/flutter-apk/*.apk
